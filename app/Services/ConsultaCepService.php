@@ -12,6 +12,16 @@ class ConsultaCepService implements ConsultaCepServiceInterface
 {
     public function consultar(string $cep): array
     {
+        $cep = preg_replace('/\D/', '', $cep);
+
+        if (!preg_match('/^\d{8}$/', $cep)) {
+            Log::warning('ViaCEP | Formato de CEP inválido', [
+                'cep_recebido' => $cep,
+            ]);
+
+            return $this->erroPadrao();
+        }
+
         Log::info('ViaCEP | Iniciando consulta', [
             'cep' => $cep,
             'endpoint' => 'https://viacep.com.br/ws/{cep}/json/',
@@ -20,7 +30,7 @@ class ConsultaCepService implements ConsultaCepServiceInterface
 
         try {
             $response = Http::get("https://viacep.com.br/ws/$cep/json/");
-        } catch (ConnectionException|RequestException $e) {
+        } catch (ConnectionException | RequestException $e) {
             Log::error('ViaCEP | Erro de conexão', [
                 'cep' => $cep,
                 'exception' => $e->getMessage(),
