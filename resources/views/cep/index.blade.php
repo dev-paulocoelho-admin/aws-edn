@@ -12,6 +12,30 @@
             <p class="mt-1 text-sm text-gray-500">
                 Histórico de consultas realizadas no sistema
             </p>
+            {{-- FLASH MESSAGES --}}
+            @if (session('success'))
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 5000)"
+                    x-show="show"
+                    x-transition
+                    class="mb-4 rounded-md bg-green-100 border border-green-300 px-4 py-3 text-sm text-green-800"
+                >
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 5000)"
+                    x-show="show"
+                    x-transition
+                    class="mb-4 rounded-md bg-red-100 border border-red-300 px-4 py-3 text-sm text-red-800"
+                >
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
     </x-slot>
 
@@ -69,9 +93,21 @@
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     {{ $consulta->id }}
                                 </td>
-                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                    {{ $consulta->cep }}
+                                <td class="px-6 py-4 font-medium">
+                                    @if(!empty($consulta->payload['erro']))
+                                        <span class="text-red-600 font-semibold">
+                                            {{ $consulta->cep }}
+                                        </span>
+                                        <div class="text-xs text-gray-400">
+                                            erro na consulta
+                                        </div>
+                                    @else
+                                        <span class="text-gray-900 dark:text-white">
+                                            {{ $consulta->cep }}
+                                        </span>
+                                    @endif
                                 </td>
+
                                 <td class="px-6 py-4">
                                     {{ $consulta->payload['logradouro'] ?? '-' }}
                                 </td>

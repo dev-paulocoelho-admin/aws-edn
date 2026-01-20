@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class ConsultaCepService implements ConsultaCepServiceInterface
 {
@@ -23,22 +24,32 @@ class ConsultaCepService implements ConsultaCepServiceInterface
      */
     public function show(string $cep): array
     {
+        $cepOriginal = $cep;
         $cep = preg_replace('/\D/', '', $cep);
 
         if (!preg_match('/^\d{8}$/', $cep)) {
-            Log::warning('ViaCEP | Formato de CEP inválido', ['cep' => $cep]);
+            Log::warning('ViaCEP | Formato de CEP inválido', [
+                'cep' => $cepOriginal,
+            ]);
+
+            $this->registrarErro($cepOriginal, $cep);
+
             return $this->erroPadrao();
         }
 
         try {
-            Log::info('ViaCEP | Iniciando consulta', ['cep' => $cep]);
+            Log::info('ViaCEP | Iniciando consulta', [
+                'cep' => $cep,
+            ]);
 
-            $response = Http::get("https://viacep.com.br/ws/$cep/json/");
+            $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
         } catch (ConnectionException $e) {
             Log::error('ViaCEP | Erro de conexão', [
                 'cep' => $cep,
                 'exception' => $e->getMessage(),
             ]);
+
+            $this->registrarErro($cepOriginal, $cep);
 
             return $this->erroPadrao();
         }
@@ -49,20 +60,50 @@ class ConsultaCepService implements ConsultaCepServiceInterface
                 'status' => $response->status(),
             ]);
 
+            $this->registrarErro($cepOriginal, $cep);
+
             return $this->erroPadrao();
         }
 
         $payload = $response->json();
 
         if (!empty($payload['erro']) || !$this->payloadValido($payload, $cep)) {
+            Log::warning('ViaCEP | Payload inválido ou CEP inexistente', [
+                'cep' => $cep,
+                'payload' => $payload,
+            ]);
+
+            $this->registrarErro($cepOriginal, $cep);
+
             return $this->erroPadrao();
         }
 
         $this->consultaCepRepository->store($cep, $payload);
 
-        Log::info('ViaCEP | Consulta finalizada com sucesso', ['cep' => $cep]);
+        Log::info('ViaCEP | Consulta finalizada com sucesso', [
+            'cep' => $cep,
+        ]);
 
         return $payload;
+    }
+
+    /**
+     * Registra uma tentativa de consulta com erro.
+     * @param string $cepOriginal
+     * @param string $cepNormalizado
+     * @return void
+     * @throws Throwable
+     */
+    private function registrarErro(string $cepOriginal, string $cepNormalizado): void
+    {
+        $this->consultaCepRepository->store(
+            $cepNormalizado,
+            [
+                'erro'         => true,
+                'mensagem'     => 'Falha na consulta do CEP',
+                'cep_original' => $cepOriginal,
+            ]
+        );
     }
 
     /**
@@ -72,7 +113,7 @@ class ConsultaCepService implements ConsultaCepServiceInterface
     private function erroPadrao(): array
     {
         return [
-            'message' => 'erro ao consultar a api de cep, cep informado invalido',
+            'message' => 'Não foi possível consultar o CEP informado.',
         ];
     }
 
@@ -87,7 +128,6 @@ class ConsultaCepService implements ConsultaCepServiceInterface
         $validator = Validator::make($payload, [
             'cep' => 'required|string|size:9',
             'uf' => 'required|string|size:2',
-            'estado' => 'required|string|max:255',
             'localidade' => 'required|string|max:255',
             'logradouro' => 'required|string|max:255',
             'bairro' => 'required|string|max:255',
