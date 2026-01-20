@@ -80,7 +80,6 @@ class ConsultaCepService implements ConsultaCepServiceInterface
     private function erroPadrao(): array
     {
         return [
-            'success' => false,
             'message' => 'erro ao consultar a api de cep, cep informado invalido',
         ];
     }
