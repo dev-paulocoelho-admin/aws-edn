@@ -2,7 +2,22 @@
 
 namespace App\Services;
 
+use Illuminate\Contracts\Pagination\Paginator;
+use Throwable;
+
 interface ConsultaCepServiceInterface
 {
-    public function consultar(string $cep): array;
+    /**
+     * Lista os CEPs consultados.
+     * @return Paginator
+     */
+    public function listarCepsConsultados(): Paginator;
+
+    /**
+     * Consulta o CEP no webservice ViaCep.com.br.
+     * @param string $cep
+     * @return array
+     * @throws Throwable
+     */
+    public function show(string $cep): array;
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\ConsultaCepServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class ConsultaCepController extends Controller
 {
@@ -18,10 +19,23 @@ class ConsultaCepController extends Controller
     /**
      * @param string $cep
      * @return JsonResponse
+     * @throws Throwable
      */
-    public function consultarApiCep(string $cep): JsonResponse
+    public function show(string $cep): JsonResponse
     {
-        $cep = $this->cepService->consultar($cep);
+        $cep = $this->cepService->show($cep);
+
         return response()->json(['data' => $cep]);
+    }
+
+    /**
+     * Lista os ceps consultados
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
+    {
+        $ceps = $this->cepService->listarCepsConsultados();
+
+        return response()->json(['data' => $ceps]);
     }
 }
