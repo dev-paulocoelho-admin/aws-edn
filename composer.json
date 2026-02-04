@@ -71,6 +71,9 @@
         ],
         "phpcs": [
             "vendor/bin/phpcs --standard=PSR12 app routes"
+        ],
+        "phpcbf": [
+            "vendor/bin/phpcbf --standard=PSR12 app routes"
         ]
     },
     "extra": {
