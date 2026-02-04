@@ -46,9 +46,16 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
+      - name: Fake Vite hot file
+        run: |
+          mkdir -p storage/app
+          echo "http://localhost:5173" > storage/app/vite.hot
+
       - name: Run tests
         env:
           APP_ENV: testing
+          APP_DEBUG: false
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: php artisan test
+
