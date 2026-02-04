@@ -54,7 +54,7 @@
                         type="text"
                         name="cep"
                         value="{{ trim(request('cep')) }}"
-                        placeholder="Digite o CEP (ex: 03587070)"
+                        placeholder="Digite o CEP (ex: 01010000)"
                         maxlength="9"
                         class="w-full sm:flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm
                                focus:outline-none focus:ring-1 focus:ring-orange-500
