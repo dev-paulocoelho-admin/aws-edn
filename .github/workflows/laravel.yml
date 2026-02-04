@@ -51,6 +51,9 @@ jobs:
           mkdir -p storage/app
           echo "http://localhost:5173" > storage/app/vite.hot
 
+      - name: Run PHPCS
+        run: composer phpcs
+
       - name: Run tests
         env:
           APP_ENV: testing
@@ -58,4 +61,3 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: php artisan test
-
