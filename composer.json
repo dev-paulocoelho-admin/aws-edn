@@ -74,6 +74,10 @@
         ],
         "phpcbf": [
             "vendor/bin/phpcbf --standard=PSR12 app routes"
+        ],
+        "pipelines": [
+            "composer phpcs",
+            "@php artisan test"
         ]
     },
     "extra": {
