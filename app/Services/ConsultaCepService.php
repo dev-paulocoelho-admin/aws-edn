@@ -42,7 +42,7 @@ class ConsultaCepService implements ConsultaCepServiceInterface
                 'cep' => $cep,
             ]);
 
-            $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
+            $response = Http::get("https://viacep.com.br/ws/$cep/json/");
         } catch (ConnectionException $e) {
             Log::error('ViaCEP | Erro de conexão', [
                 'cep' => $cep,
