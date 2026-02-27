@@ -40,7 +40,9 @@ class ConsultaCepController extends Controller
      */
     public function consultarViaTela(ConsultaCepRequest $request): RedirectResponse
     {
-        $resultado = $this->cepService->show($request->validated()['cep']);
+        $cep = $request->validated()['cep'];
+
+        $resultado = $this->cepService->show($cep);
 
         if (isset($resultado['message'])) {
             return redirect()

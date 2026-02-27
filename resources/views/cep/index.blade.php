@@ -50,16 +50,23 @@
                       action="{{ url('/cep/consultar') }}"
                       class="flex flex-col sm:flex-row gap-4 items-center mb-6">
 
-                    <input
-                        type="text"
-                        name="cep"
-                        value="{{ trim(request('cep')) }}"
-                        placeholder="Digite o CEP (ex: 01010000)"
-                        maxlength="9"
-                        class="w-full sm:flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm
-                               focus:outline-none focus:ring-1 focus:ring-orange-500
-                               dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 text-sm"
-                    >
+                    <div class="w-full sm:flex-1">
+                        <input
+                            type="text"
+                            name="cep"
+                            value="{{ trim(request('cep')) }}"
+                            placeholder="Digite o CEP (ex: 01010000)"
+                            maxlength="9"
+                            class="w-full px-4 py-2 border {{ $errors->has('cep') ? 'border-red-500' : 'border-gray-300' }} rounded-md shadow-sm
+                                   focus:outline-none focus:ring-1 focus:ring-orange-500
+                                   dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 text-sm"
+                        >
+                        @if ($errors->has('cep'))
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">
+                                <strong>{{ $errors->first('cep') }}</strong>
+                            </p>
+                        @endif
+                    </div>
 
                     <button
                         type="submit"

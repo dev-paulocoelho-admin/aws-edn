@@ -15,7 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/cep', [ConsultaCepController::class, 'obterListagemCep'])
         ->name('cep.index');
-    Route::post('/cep/consultar', [ConsultaCepController::class, 'consultarViaTela'])
+    Route::get('/cep/consultar', [ConsultaCepController::class, 'consultarViaTela'])
         ->name('cep.consultar');
 });
 
