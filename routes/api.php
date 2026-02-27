@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::prefix('cep')->group(function () {
-    Route::get('/listar-ceps-consultados', [ConsultaCepController::class, 'index']);
-    Route::get('/{cep}', [ConsultaCepController::class, 'show']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/consulta-cep', [ConsultaCepController::class, 'index']);
+    Route::post('/consulta-cep', [ConsultaCepController::class, 'store']);
 });
